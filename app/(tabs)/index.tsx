@@ -11,7 +11,7 @@ import {
   Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Audio } from 'expo-audio';
+import { Audio } from 'expo-av';
 import io, { Socket } from 'socket.io-client';
 
 // TYPES
@@ -51,10 +51,10 @@ export default function App() {
   const [users, setUsers] = useState<string[]>([]);
 
   const pressStartTime = useRef<number | null>(null);
-  const morseTimeout = useRef<NodeJS.Timeout | null>(null);
-  const letterTimeout = useRef<NodeJS.Timeout | null>(null);
-  const dotSound = useRef<Audio.Sound | null>(null);
-  const dashSound = useRef<Audio.Sound | null>(null);
+  const morseTimeout = useRef<number | null>(null);
+  const letterTimeout = useRef<number | null>(null);
+  const dotSound = useRef<any>(null);
+  const dashSound = useRef<any>(null);
 
   // SERVER URL - CHANGE THIS TO YOUR DEPLOYED SERVER
   const SERVER_URL = 'http://192.168.1.100:3000'; // Change to your server IP or deployed URL
@@ -74,14 +74,14 @@ export default function App() {
   const setupAudio = async () => {
     try {
       // Load sounds once
-      const dot = await Audio.Sound.createAsync(
+      const dotResult = await Audio.Sound.createAsync(
         { uri: 'https://www.soundjay.com/buttons/sounds/beep-07a.mp3' }
       );
-      const dash = await Audio.Sound.createAsync(
+      const dashResult = await Audio.Sound.createAsync(
         { uri: 'https://www.soundjay.com/buttons/sounds/beep-08b.mp3' }
       );
-      dotSound.current = dot.sound;
-      dashSound.current = dash.sound;
+      dotSound.current = dotResult.sound;
+      dashSound.current = dashResult.sound;
     } catch (error) {
       console.log('Error setting up audio:', error);
     }
@@ -502,13 +502,13 @@ const styles = StyleSheet.create({
 
 /* 
 Install these packages:
-npm install expo-audio react-native-safe-area-context
+npm install expo-av react-native-safe-area-context
 
 package.json dependencies:
 {
   "dependencies": {
     "expo": "~52.0.0",
-    "expo-audio": "~14.0.7",
+    "expo-av": "~14.0.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-safe-area-context": "4.12.0",
